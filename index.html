@@ -100,11 +100,11 @@
         </label>
         <label>
           <span>Coins per Energy (10H)</span>
-          <input type="text" id="cpe10H" value="2.16 × Energy" readonly />
+          <input type="text" id=\"cpe10H\" value=\"1.92 × Energy\" readonly />
         </label>
         <label>
           <span>Subtotal Coins (10H)</span>
-          <input type="text" id="coins10H" value="0 × 2.16 = 0" readonly />
+          <input type="text" id=\"coins10H\" value=\"0 × 1.92 = 0\" readonly />
         </label>
       </div>
       <div class="grid3" style="margin-top:10px">
@@ -114,11 +114,11 @@
         </label>
         <label>
           <span>Coins per Energy (20N)</span>
-          <input type="text" id="cpe20N" value="1.92 × Energy" readonly />
+          <input type="text" id=\"cpe20N\" value=\"2.16 × Energy\" readonly />
         </label>
         <label>
           <span>Subtotal Coins (20N)</span>
-          <input type="text" id="coins20N" value="0 × 1.92 = 0" readonly />
+          <input type="text" id=\"coins20N\" value=\"0 × 2.16 = 0\" readonly />
         </label>
       </div>
       <p class="muted" style="margin-top:8px">Coins per Energy rates are fixed values based on event averages and cannot be edited.</p>
@@ -247,6 +247,8 @@
       const s10 = Math.floor(e10 * CPE_10H);
       const s20 = Math.floor(e20 * CPE_20N);
       els.coins10H.value = `${fmt(e10)} × ${CPE_10H} = ${fmt(s10)}`;
+      els.coins20N.value = `${fmt(e20)} × ${CPE_20N} = ${fmt(s20)}`;
+    } × ${CPE_10H} = ${fmt(s10)}`;
       els.coins20N.value = `${fmt(e20)} × ${CPE_20N} = ${fmt(s20)}`;
     } × 0.55 = ${fmt(s10)}`;
       els.coins20N.value = `${fmt(e20)} × 0.85 = ${fmt(s20)}`;
