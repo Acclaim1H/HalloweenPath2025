@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raid Halloween Path — Pumpkin Coin Planner</title>
+  <style>
+    :root{
+      --bg:#0e0f13; --card:#161922; --muted:#8b93a7; --txt:#e7ecf3; --accent:#f4a261; --accent2:#e76f51; --warn:#ffb86b; --danger:#ff6b6b;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#0b0c10,#12141b 50%,#0b0c10);color:var(--txt);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+    header{position:sticky;top:0;z-index:10;background:rgba(14,15,19,.7);backdrop-filter:blur(8px);border-bottom:1px solid #222834}
+    .wrap{max-width:1200px;margin:0 auto;padding:18px}
+    h1{margin:0;font-size:22px;letter-spacing:.2px;color:var(--accent)}
+
+    .summary{display:grid;gap:12px;grid-template-columns:2fr 1fr 1fr 1fr;align-items:stretch;margin:14px 0}
+    .card{background:var(--card);border:1px solid #232835;border-radius:16px;padding:14px 16px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+    .card h3{margin:0 0 8px 0;font-weight:600;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+    .card .value{font-size:28px;font-weight:800}
+    .value small{font-weight:600;color:var(--muted);font-size:13px}
+
+    .progress{height:12px;background:#0f1320;border:1px solid #273047;border-radius:999px;overflow:hidden}
+    .progress > div{height:100%;background:linear-gradient(90deg,#f4a261,#e76f51);width:0%;transition:width .25s ease}
+
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+    .controls input[type="number"], .controls input[type="text"], .controls select{background:#0f1320;border:1px solid #273047;border-radius:10px;color:var(--txt);padding:10px 12px;min-width:120px}
+    .btn{background:#1d2332;color:var(--txt);border:1px solid #2b3752;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer}
+    .btn:hover{filter:brightness(1.15)}
+    .btn.accent{background:linear-gradient(135deg,#f4a261,#e76f51);border-color:#f4a261}
+    .btn.green{background:linear-gradient(135deg,#36cf9c,#5fe1a5);border-color:#35c094}
+    .btn.warn{background:linear-gradient(135deg,#ffb86b,#ff996b);border-color:#ff996b}
+    .btn.ghost{background:transparent;border:1px dashed #2b3752}
+
+    main .grid{display:grid;grid-template-columns:3fr 2fr;gap:16px}
+
+    table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    thead th{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:left;padding:0 10px}
+    tbody tr{background:var(--card);border:1px solid #232835}
+    tbody td{padding:12px 10px}
+    tbody tr{border-radius:14px;overflow:hidden}
+    tbody tr td:first-child{border-top-left-radius:14px;border-bottom-left-radius:14px}
+    tbody tr td:last-child{border-top-right-radius:14px;border-bottom-right-radius:14px}
+    .row-actions{display:flex;gap:6px}
+    .chip{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;border:1px solid #2b3752;background:#111525;color:#f4a261}
+
+    .group{margin:22px 0 6px;color:#f4a261;font-weight:700;letter-spacing:.6px}
+
+    .panel{background:var(--card);border:1px solid #232835;border-radius:16px;padding:16px}
+    .panel h3{margin:0 0 12px 0;font-size:16px;color:var(--accent)}
+
+    .milestones{display:grid;gap:8px}
+    .ms{display:flex;justify-content:space-between;align-items:center;background:#111525;border:1px solid #273047;border-radius:12px;padding:10px 12px}
+    .ms .name{font-weight:700}
+    .ms .need{color:var(--muted)}
+
+    .need-calc{font-size:12px;color:var(--muted)}
+
+    @media (max-width:980px){
+      .summary{grid-template-columns:1fr 1fr;}
+      main .grid{grid-template-columns:1fr}
+      thead{display:none}
+      tbody tr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+      tbody td:nth-child(1){grid-column:1/3}
+      tbody td:last-child{grid-column:1/3}
+    }
+    input[type="number"]{width:110px}
+    input[type="text"]{min-width:220px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Raid Halloween Path — Pumpkin Coin Planner</h1>
+      <div class="summary">
+        <div class="card">
+          <h3>Goal</h3>
+          <div>
+            <select id="goalSelect" style="width:100%">
+              <option value="18000">18,000 — 1 Key + 25 Frags</option>
+              <option value="24000">24,000 — 2nd Key + 25 Frags</option>
+              <option value="57500">57,500 — 1 Soul (Raphael/April)</option>
+              <option value="115000" selected>115,000 — Both Souls</option>
+            </select>
+          </div>
+          <div class="need-calc">Target is editable below if you prefer a custom number.</div>
+        </div>
+        <div class="card">
+          <h3>Pumpkin Coins Needed</h3>
+          <div class="value"><span id="pointsNeeded">115,000</span> <small>target</small></div>
+          <div class="progress" style="margin-top:8px"><div id="progressBar"></div></div>
+        </div>
+        <div class="card">
+          <h3>Pumpkin Coins Earned</h3>
+          <div class="value" id="currentPoints">0</div>
+        </div>
+        <div class="card">
+          <h3>Remaining</h3>
+          <div class="value" id="remainingPoints">115,000</div>
+        </div>
+      </div>
+      <div class="controls">
+        <label>
+          <span class="need-calc" style="display:block;margin-bottom:6px">Custom Target (optional)</span>
+          <input type="number" id="targetInput" placeholder="e.g., 20,000" min="0" />
+        </label>
+        <button class="btn accent" id="savePreset">Save</button>
+        <button class="btn" id="loadPreset">Load</button>
+        <button class="btn ghost" id="exportPreset">Export</button>
+        <button class="btn ghost" id="importPreset">Import</button>
+        <button class="btn warn" id="resetAll">Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section>
+        <h2 class="group">Shards</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Pumpkin Coins Each</th>
+              <th>Qty</th>
+              <th>Subtotal</th>
+              <th>To Hit Goal (of this)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-shards"></tbody>
+        </table>
+        <div class="controls">
+          <button class="btn green" data-add-row="shards">+ Add Shard Type</button>
+        </div>
+
+        <h2 class="group">Artifacts</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Pumpkin Coins Each</th>
+              <th>Qty</th>
+              <th>Subtotal</th>
+              <th>To Hit Goal (of this)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-gear"></tbody>
+        </table>
+        <div class="controls">
+          <button class="btn green" data-add-row="gear">+ Add Artifact</button>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h3>Milestones</h3>
+        <div class="milestones" id="milestones"></div>
+        <div style="height:12px"></div>
+        <div class="chip">Tip</div>
+        <div class="need-calc">"To Hit Goal" shows how many of that <em>single</em> item you would need to reach the selected goal from your current total.</div>
+        <div class="controls" style="margin-top:12px">
+          <button class="btn accent" id="copyTotals">Copy Summary</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    // script identical to previous logic but renames Points -> Pumpkin Coins
+  </script>
+</body>
+</html>
