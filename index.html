@@ -98,7 +98,7 @@
         </label>
         <label>
           <span>Coins per Energy (10H)</span>
-          <input type="number" id="cpe10H" min="0" step="0.01" placeholder="editable e.g., 0.85" />
+          <input type="number" id="cpe10H" min="0" step="0.01" value="0.85" disabled />
         </label>
         <label>
           <span>Subtotal Coins (10H)</span>
@@ -112,14 +112,14 @@
         </label>
         <label>
           <span>Coins per Energy (20N)</span>
-          <input type="number" id="cpe20N" min="0" step="0.01" placeholder="editable e.g., 0.55" />
+          <input type="number" id="cpe20N" min="0" step="0.01" value="0.55" disabled />
         </label>
         <label>
           <span>Subtotal Coins (20N)</span>
           <input type="number" id="coins20N" min="0" value="0" disabled />
         </label>
       </div>
-      <p class="muted" style="margin-top:8px">Set your own <em>Coins per Energy</em> assumptions for 10H and 20N (these will differ by your drop luck & stage). The subtotals update live.</p>
+      <p class="muted" style="margin-top:8px">Coins per Energy rates are fixed values based on event averages and cannot be edited.</p>
     </div>
 
     <div class="section panel">
@@ -193,13 +193,13 @@
     const state = {
       target: 115000,
       already: 0,
-      energy: { e10H:0, cpe10H:0, e20N:0, cpe20N:0 },
+      energy: { e10H:0, e20N:0 },
       shards: { mystery:0, ancient:0, void:0, primal:0, sacred:0 },
     };
 
     function coinsFromEnergy(){
-      const a = num(state.energy.e10H) * num(state.energy.cpe10H);
-      const b = num(state.energy.e20N) * num(state.energy.cpe20N);
+      const a = num(state.energy.e10H) * 0.85;
+      const b = num(state.energy.e20N) * 0.55;
       return Math.floor(a + b);
     }
 
@@ -238,8 +238,8 @@
 
     function update(){
       // Energy subtotals
-      els.coins10H.value = Math.floor(num(state.energy.e10H)*num(state.energy.cpe10H));
-      els.coins20N.value = Math.floor(num(state.energy.e20N)*num(state.energy.cpe20N));
+      els.coins10H.value = Math.floor(num(state.energy.e10H)*0.85);
+      els.coins20N.value = Math.floor(num(state.energy.e20N)*0.55);
 
       const planned = totalPlanned();
       const target = num(state.target);
@@ -259,13 +259,9 @@
       els.targetInput.addEventListener('input', ()=>{ const v=num(els.targetInput.value); state.target = v>0? v : num(els.goalSelect.value); update(); });
       els.alreadyCoins.addEventListener('input', ()=>{ state.already = num(els.alreadyCoins.value); update(); });
 
-      // energy
       els.energy10H.addEventListener('input', ()=>{ state.energy.e10H = num(els.energy10H.value); update(); });
-      els.cpe10H.addEventListener('input', ()=>{ state.energy.cpe10H = num(els.cpe10H.value); update(); });
       els.energy20N.addEventListener('input', ()=>{ state.energy.e20N = num(els.energy20N.value); update(); });
-      els.cpe20N.addEventListener('input', ()=>{ state.energy.cpe20N = num(els.cpe20N.value); update(); });
 
-      // shards
       els.mysteryQty.addEventListener('input', ()=>{ state.shards.mystery = num(els.mysteryQty.value); update(); });
       els.ancientQty.addEventListener('input', ()=>{ state.shards.ancient = num(els.ancientQty.value); update(); });
       els.voidQty.addEventListener('input', ()=>{ state.shards.void = num(els.voidQty.value); update(); });
@@ -273,11 +269,7 @@
       els.sacredQty.addEventListener('input', ()=>{ state.shards.sacred = num(els.sacredQty.value); update(); });
     }
 
-    // init defaults
     function init(){
-      // start with blank CPE so creators can set their own assumptions
-      els.cpe10H.value = '';
-      els.cpe20N.value = '';
       bind();
       update();
     }
