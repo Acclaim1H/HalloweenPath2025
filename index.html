@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Raid Halloween Path — Pumpkin Coin Planner</title>
+  <title>Halloween Path — Pumpkin Coin Planner</title>
   <style>
     :root{
       --bg:#0e0f13; --card:#161922; --muted:#8b93a7; --txt:#e7ecf3; --accent:#f4a261; --accent2:#e76f51; --warn:#ffb86b; --danger:#ff6b6b;
@@ -92,33 +92,33 @@
 
   <main class="wrap">
     <div class="section panel">
-      <h3>Dungeon Energy Plan</h3>
+      <h3>Energy Plan</h3>
       <div class="grid3">
         <label>
-          <span>Dragon 10 Hard — Energy Planned</span>
+          <span>10 Hard — Energy Planned</span>
           <input type="number" id="energy10H" min="0" placeholder="e.g., 5000" />
         </label>
         <label>
           <span>Coins per Energy (10H)</span>
-          <input type="text" id="cpe10H" value="0.85 × Energy" readonly />
+          <input type="text" id="cpe10H" value="2.16 × Energy" readonly />
         </label>
         <label>
           <span>Subtotal Coins (10H)</span>
-          <input type="text" id="coins10H" value="0 × 0.85 = 0" readonly />
+          <input type="text" id="coins10H" value="0 × 2.16 = 0" readonly />
         </label>
       </div>
       <div class="grid3" style="margin-top:10px">
         <label>
-          <span>Dragon 20 Normal — Energy Planned</span>
+          <span>20 Normal — Energy Planned</span>
           <input type="number" id="energy20N" min="0" placeholder="e.g., 5000" />
         </label>
         <label>
           <span>Coins per Energy (20N)</span>
-          <input type="text" id="cpe20N" value="0.55 × Energy" readonly />
+          <input type="text" id="cpe20N" value="1.92 × Energy" readonly />
         </label>
         <label>
           <span>Subtotal Coins (20N)</span>
-          <input type="text" id="coins20N" value="0 × 0.55 = 0" readonly />
+          <input type="text" id="coins20N" value="0 × 1.92 = 0" readonly />
         </label>
       </div>
       <p class="muted" style="margin-top:8px">Coins per Energy rates are fixed values based on event averages and cannot be edited.</p>
@@ -192,6 +192,9 @@
 
     const SHARD_POINTS = { mystery:3, ancient:300, void:750, primal:2700, sacred:4500 };
 
+    const CPE_10H = 1.92; // coins per energy, 10 Hard
+    const CPE_20N = 2.16; // coins per energy, 20 Normal
+
     const state = {
       target: 115000,
       already: 0,
@@ -200,8 +203,8 @@
     };
 
     function coinsFromEnergy(){
-      const a = num(state.energy.e10H) * 0.85;
-      const b = num(state.energy.e20N) * 0.55;
+      const a = num(state.energy.e10H) * CPE_10H;
+      const b = num(state.energy.e20N) * CPE_20N;
       return Math.floor(a + b);
     }
 
@@ -241,10 +244,12 @@
     function updateEnergyBoxes(){
       const e10 = num(state.energy.e10H);
       const e20 = num(state.energy.e20N);
-      const s10 = Math.floor(e10 * 0.85);
-      const s20 = Math.floor(e20 * 0.55);
-      els.coins10H.value = `${fmt(e10)} × 0.85 = ${fmt(s10)}`;
-      els.coins20N.value = `${fmt(e20)} × 0.55 = ${fmt(s20)}`;
+      const s10 = Math.floor(e10 * CPE_10H);
+      const s20 = Math.floor(e20 * CPE_20N);
+      els.coins10H.value = `${fmt(e10)} × ${CPE_10H} = ${fmt(s10)}`;
+      els.coins20N.value = `${fmt(e20)} × ${CPE_20N} = ${fmt(s20)}`;
+    } × 0.55 = ${fmt(s10)}`;
+      els.coins20N.value = `${fmt(e20)} × 0.85 = ${fmt(s20)}`;
     }
 
     function update(){
