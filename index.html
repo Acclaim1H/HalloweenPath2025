@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Halloween Path — Pumpkin Coin Planner</title>
   <style>
-    :root{
-      --bg:#0e0f13; --card:#161922; --muted:#8b93a7; --txt:#e7ecf3; --accent:#f4a261; --accent2:#e76f51; --warn:#ffb86b; --danger:#ff6b6b;
-    }
+    :root{ --bg:#0e0f13; --card:#161922; --muted:#8b93a7; --txt:#e7ecf3; --accent:#f4a261; --warn:#ffb86b; }
     *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,#0b0c10,#12141b 50%,#0b0c10);color:var(--txt);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+    body{margin:0;background:#0b0c10;color:var(--txt);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
     header{position:sticky;top:0;z-index:10;background:rgba(14,15,19,.7);backdrop-filter:blur(8px);border-bottom:1px solid #222834}
     .wrap{max-width:1000px;margin:0 auto;padding:18px}
     h1{margin:0;font-size:22px;letter-spacing:.2px;color:var(--accent)}
@@ -19,12 +17,11 @@
     .card h3{margin:0 0 8px 0;font-weight:600;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
     .card .value{font-size:28px;font-weight:800}
     .value small{font-weight:600;color:var(--muted);font-size:13px}
-
     .progress{height:12px;background:#0f1320;border:1px solid #273047;border-radius:999px;overflow:hidden}
-    .progress > div{height:100%;background:linear-gradient(90deg,#f4a261,#e76f51);width:0%;transition:width .25s ease}
+    .progress > div{height:100%;background:linear-gradient(90deg,#f4a261,#ff7b57);width:0%;transition:width .25s ease}
 
     .controls{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
-    .controls input[type="number"], .controls input[type="text"], .controls select{background:#0f1320;border:1px solid #273047;border-radius:10px;color:var(--txt);padding:10px 12px;min-width:120px;width:100%}
+    .controls input[type="number"], .controls select{background:#0f1320;border:1px solid #273047;border-radius:10px;color:var(--txt);padding:10px 12px;width:100%}
     label span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
 
     .section{margin:20px 0}
@@ -33,22 +30,16 @@
 
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-
     .muted{color:var(--muted);font-size:12px}
-
-    @media (max-width:900px){
-      .summary{grid-template-columns:1fr 1fr}
-      .controls{grid-template-columns:1fr}
-      .grid2,.grid3{grid-template-columns:1fr}
-    }
-      .readonly{background:#1a1d28;color:#b8bccf;border:1px solid #273047}
     input[readonly]{background:#1a1d28;color:#b8bccf;border:1px solid #273047}
+
+    @media (max-width:900px){ .summary{grid-template-columns:1fr 1fr} .controls{grid-template-columns:1fr} .grid2,.grid3{grid-template-columns:1fr} }
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
-      <h1>Raid Halloween Path — Pumpkin Coin Planner</h1>
+      <h1>Halloween Path — Pumpkin Coin Planner</h1>
       <div class="summary">
         <div class="card">
           <h3>Goal</h3>
@@ -100,11 +91,11 @@
         </label>
         <label>
           <span>Coins per Energy (10H)</span>
-          <input type="text" id=\"cpe10H\" value=\"1.92 × Energy\" readonly />
+          <input type="text" id="cpe10H" value="1.92 × Energy" readonly />
         </label>
         <label>
           <span>Subtotal Coins (10H)</span>
-          <input type="text" id=\"coins10H\" value=\"0 × 1.92 = 0\" readonly />
+          <input type="text" id="coins10H" value="0 × 1.92 = 0" readonly />
         </label>
       </div>
       <div class="grid3" style="margin-top:10px">
@@ -114,14 +105,14 @@
         </label>
         <label>
           <span>Coins per Energy (20N)</span>
-          <input type="text" id=\"cpe20N\" value=\"2.16 × Energy\" readonly />
+          <input type="text" id="cpe20N" value="2.16 × Energy" readonly />
         </label>
         <label>
           <span>Subtotal Coins (20N)</span>
-          <input type="text" id=\"coins20N\" value=\"0 × 2.16 = 0\" readonly />
+          <input type="text" id="coins20N" value="0 × 2.16 = 0" readonly />
         </label>
       </div>
-      <p class="muted" style="margin-top:8px">Coins per Energy rates are fixed values based on event averages and cannot be edited.</p>
+      <p class="muted" style="margin-top:8px">Multipliers are fixed from the drop-rate math you provided. Enter only energy.</p>
     </div>
 
     <div class="section panel">
@@ -174,6 +165,10 @@
       { name: 'Both Souls', pts: 115000 },
     ];
 
+    const SHARD_POINTS = { mystery:3, ancient:300, void:750, primal:2700, sacred:4500 };
+    const CPE_10H = 1.92; // coins per energy 10 Hard
+    const CPE_20N = 2.16; // coins per energy 20 Normal
+
     const els = {
       goalSelect: $('#goalSelect'),
       pointsNeeded: $('#pointsNeeded'),
@@ -182,18 +177,11 @@
       progressBar: $('#progressBar'),
       targetInput: $('#targetInput'),
       alreadyCoins: $('#alreadyCoins'),
-      // energy
       energy10H: $('#energy10H'), coins10H: $('#coins10H'),
       energy20N: $('#energy20N'), coins20N: $('#coins20N'),
-      // shards
       mysteryQty: $('#mysteryQty'), ancientQty: $('#ancientQty'), voidQty: $('#voidQty'), primalQty: $('#primalQty'), sacredQty: $('#sacredQty'),
       milestones: $('#milestones'),
     };
-
-    const SHARD_POINTS = { mystery:3, ancient:300, void:750, primal:2700, sacred:4500 };
-
-    const CPE_10H = 1.92; // coins per energy, 10 Hard
-    const CPE_20N = 2.16; // coins per energy, 20 Normal
 
     const state = {
       target: 115000,
@@ -248,10 +236,6 @@
       const s20 = Math.floor(e20 * CPE_20N);
       els.coins10H.value = `${fmt(e10)} × ${CPE_10H} = ${fmt(s10)}`;
       els.coins20N.value = `${fmt(e20)} × ${CPE_20N} = ${fmt(s20)}`;
-    } × ${CPE_10H} = ${fmt(s10)}`;
-      els.coins20N.value = `${fmt(e20)} × ${CPE_20N} = ${fmt(s20)}`;
-    } × 0.55 = ${fmt(s10)}`;
-      els.coins20N.value = `${fmt(e20)} × 0.85 = ${fmt(s20)}`;
     }
 
     function update(){
@@ -273,10 +257,8 @@
       els.goalSelect.addEventListener('change', ()=>{ state.target = num(els.goalSelect.value); els.targetInput.value = ''; update(); });
       els.targetInput.addEventListener('input', ()=>{ const v=num(els.targetInput.value); state.target = v>0? v : num(els.goalSelect.value); update(); });
       els.alreadyCoins.addEventListener('input', ()=>{ state.already = num(els.alreadyCoins.value); update(); });
-
       els.energy10H.addEventListener('input', ()=>{ state.energy.e10H = num(els.energy10H.value); update(); });
       els.energy20N.addEventListener('input', ()=>{ state.energy.e20N = num(els.energy20N.value); update(); });
-
       els.mysteryQty.addEventListener('input', ()=>{ state.shards.mystery = num(els.mysteryQty.value); update(); });
       els.ancientQty.addEventListener('input', ()=>{ state.shards.ancient = num(els.ancientQty.value); update(); });
       els.voidQty.addEventListener('input', ()=>{ state.shards.void = num(els.voidQty.value); update(); });
@@ -284,12 +266,7 @@
       els.sacredQty.addEventListener('input', ()=>{ state.shards.sacred = num(els.sacredQty.value); update(); });
     }
 
-    function init(){
-      bind();
-      update();
-    }
-
-    init();
+    (function init(){ bind(); update(); })();
   </script>
 </body>
 </html>
