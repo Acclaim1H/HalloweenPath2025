@@ -168,6 +168,7 @@
     const SHARD_POINTS = { mystery:3, ancient:300, void:750, primal:2700, sacred:4500 };
     const CPE_10H = 1.92; // coins per energy 10 Hard
     const CPE_20N = 2.16; // coins per energy 20 Normal
+    const CPE_3N = 2.54; // coins per energy 3 Event Dungeon
 
     const els = {
       goalSelect: $('#goalSelect'),
@@ -179,6 +180,7 @@
       alreadyCoins: $('#alreadyCoins'),
       energy10H: $('#energy10H'), coins10H: $('#coins10H'),
       energy20N: $('#energy20N'), coins20N: $('#coins20N'),
+      energy3N: $('#energy3N'), coins3N: $('#coins3N'),
       mysteryQty: $('#mysteryQty'), ancientQty: $('#ancientQty'), voidQty: $('#voidQty'), primalQty: $('#primalQty'), sacredQty: $('#sacredQty'),
       milestones: $('#milestones'),
     };
@@ -186,13 +188,14 @@
     const state = {
       target: 115000,
       already: 0,
-      energy: { e10H:0, e20N:0 },
+      energy: { e10H:0, e20N:0, e3N:0 },
       shards: { mystery:0, ancient:0, void:0, primal:0, sacred:0 },
     };
 
     function coinsFromEnergy(){
       const a = num(state.energy.e10H) * CPE_10H;
       const b = num(state.energy.e20N) * CPE_20N;
+      const b = num(state.energy.e3N) * CPE_3N;
       return Math.floor(a + b);
     }
 
@@ -232,10 +235,13 @@
     function updateEnergyBoxes(){
       const e10 = num(state.energy.e10H);
       const e20 = num(state.energy.e20N);
+      const e3 = num(state.energy.e3N);
       const s10 = Math.floor(e10 * CPE_10H);
       const s20 = Math.floor(e20 * CPE_20N);
+      const s3 = Math.floor(e3 * CPE_3N);
       els.coins10H.value = `${fmt(e10)} × ${CPE_10H} = ${fmt(s10)}`;
       els.coins20N.value = `${fmt(e20)} × ${CPE_20N} = ${fmt(s20)}`;
+      els.coins3N.value = `${fmt(e3)} × ${CPE_3N} = ${fmt(s3)}`;
     }
 
     function update(){
@@ -259,6 +265,7 @@
       els.alreadyCoins.addEventListener('input', ()=>{ state.already = num(els.alreadyCoins.value); update(); });
       els.energy10H.addEventListener('input', ()=>{ state.energy.e10H = num(els.energy10H.value); update(); });
       els.energy20N.addEventListener('input', ()=>{ state.energy.e20N = num(els.energy20N.value); update(); });
+      els.energy3N.addEventListener('input', ()=>{ state.energy.e3N = num(els.energy3N.value); update(); });
       els.mysteryQty.addEventListener('input', ()=>{ state.shards.mystery = num(els.mysteryQty.value); update(); });
       els.ancientQty.addEventListener('input', ()=>{ state.shards.ancient = num(els.ancientQty.value); update(); });
       els.voidQty.addEventListener('input', ()=>{ state.shards.void = num(els.voidQty.value); update(); });
