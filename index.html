@@ -210,7 +210,7 @@
       const a = num(state.energy.e10H) * CPE_10H;
       const b = num(state.energy.e20N) * CPE_20N;
       const c = num(state.energy.e3N) * CPE_3N;
-      return Math.floor(a + b);
+      return Math.floor(a + b + c);
     }
 
     function coinsFromShards(){
